@@ -52,7 +52,7 @@
             [status-im.ui.screens.pairing.views :refer [installations]]
             [status-im.ui.screens.bootnodes-settings.edit-bootnode.views :refer [edit-bootnode]]
             [status-im.ui.screens.currency-settings.views :refer [currency-settings]]
-            [status-im.ui.screens.hardwallet.settings.views :refer [keycard-settings enter-pin reset-card]]
+            [status-im.ui.screens.hardwallet.settings.views :refer [keycard-settings reset-card]]
             [status-im.ui.screens.help-center.views :refer [help-center]]
             [status-im.ui.screens.browser.views :refer [browser]]
             [status-im.ui.screens.add-new.open-dapp.views :refer [open-dapp dapp-description]]
@@ -60,6 +60,8 @@
             [status-im.ui.screens.accounts.create.views :refer [create-account]]
             [status-im.ui.screens.hardwallet.authentication-method.views :refer [hardwallet-authentication-method]]
             [status-im.ui.screens.hardwallet.connect.views :refer [hardwallet-connect]]
+            [status-im.ui.screens.hardwallet.login.views :refer [hardwallet-login]]
+            [status-im.ui.screens.hardwallet.pin.views :refer [enter-pin]]
             [status-im.ui.screens.hardwallet.setup.views :refer [hardwallet-setup]]
             [status-im.ui.screens.hardwallet.success.views :refer [hardwallet-success]]
             [status-im.ui.screens.profile.seed.views :refer [backup-seed]]
@@ -142,6 +144,8 @@
          config/hardwallet-enabled?
          (assoc :hardwallet-authentication-method hardwallet-authentication-method
                 :hardwallet-connect hardwallet-connect
+                :hardwallet-login hardwallet-login
+                :hardwallet-pin-login enter-pin
                 :hardwallet-setup hardwallet-setup
                 :hardwallet-success hardwallet-success)))
       (cond-> {:headerMode "none"}
@@ -334,6 +338,7 @@
             config/hardwallet-enabled?
             (assoc :hardwallet-authentication-method hardwallet-authentication-method
                    :hardwallet-connect hardwallet-connect
+                   :hardwallet-login hardwallet-login
                    :hardwallet-setup hardwallet-setup
                    :hardwallet-success hardwallet-success
                    :keycard-settings keycard-settings
