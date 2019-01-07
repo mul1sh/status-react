@@ -776,6 +776,11 @@
    (chat.input/send-plain-text-message-fx cofx message-text current-chat-id)))
 
 (handlers/register-handler-fx
+ :chat/send-sticker
+ (fn [{{:keys [current-chat-id]} :db :as cofx} [_ sticker]]
+   (chat.input/send-sticker-fx cofx sticker current-chat-id)))
+
+(handlers/register-handler-fx
  :chat/disable-cooldown
  (fn [cofx _]
    (chat/disable-chat-cooldown cofx)))
