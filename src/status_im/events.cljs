@@ -158,6 +158,11 @@
    (accounts/enable-notifications cofx desktop-notifications?)))
 
 (handlers/register-handler-fx
+ :accounts.ui/links-preview-enabled
+ (fn [cofx [_ desktop-links-preview-enabled?]]
+   (accounts/enable-links-preview cofx desktop-links-preview-enabled?)))
+
+(handlers/register-handler-fx
  :accounts.ui/toggle-pfs
  (fn [cofx [_ enabled?]]
    (accounts/toggle-pfs cofx enabled?)))

@@ -217,3 +217,7 @@
 (def v16 (assoc-in v15
                    [:properties :keycard-instance-uid]
                    {:type :string :optional true}))
+
+(def v17 (assoc-in v16
+                   [:properties :desktop-links-preview-enabled?]
+                   {:type :bool :default false}))
