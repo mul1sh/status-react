@@ -75,7 +75,7 @@
                             :desktop-links-preview-enabled? false
                             :photo-path                     (identicon/identicon pubkey)
                             :signing-phrase                 signing-phrase
-                            :seed-backed-up?                seed-backed-up
+                            :seed-backed-up?                seed-backed-up?
                             :mnemonic                       mnemonic
                             :keycard-instance-uid           keycard-instance-uid
                             :settings                       (constants/default-account-settings)}]
