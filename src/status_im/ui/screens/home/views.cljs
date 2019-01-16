@@ -16,7 +16,7 @@
             [status-im.ui.components.react :as components]
             [status-im.utils.utils :as utils]))
 
-(defn- toolbar [show-welcome? show-sync-state sync-state latest-block-number]
+(defn- toolbar [show-welcome? show-sync-state sync-state latest-block-number logged-in?]
   (when-not (and show-welcome?
                  platform/android?)
     [toolbar/toolbar nil nil
@@ -35,7 +35,8 @@
          [toolbar/content-wrapper
           [components.common/logo styles/toolbar-logo]]))
      [toolbar/actions
-      (when platform/ios?
+      (when (and platform/ios?
+                 logged-in?)
         [(-> (toolbar.actions/add true #(re-frame/dispatch [:navigate-to :new]))
              (assoc-in [:icon-opts :accessibility-label] :new-chat-button))])]]))
 
@@ -90,6 +91,7 @@
 (views/defview home [loading?]
   (views/letsubs [show-welcome? [:get-in [:accounts/create :show-welcome?]]
                   view-id [:get :view-id]
+                  logging-in? [:get :accounts/login]
                   sync-state [:chain-sync-state]
                   latest-block-number [:latest-block-number]
                   rpc-network? [:current-network-uses-rpc?]
@@ -102,12 +104,13 @@
             #(re-frame/dispatch [:init-rest-of-chats])
             100))))}
     [react/view styles/container
-     [toolbar show-welcome? (and network-initialized? (not rpc-network?)) sync-state latest-block-number]
+     [toolbar show-welcome? (and network-initialized? (not rpc-network?)) sync-state latest-block-number (not logging-in?)]
      (cond show-welcome?
            [welcome view-id]
            :else
            [chats-list])
-     (when platform/android?
+     (when (and platform/android?
+                (not logging-in?))
        [home-action-button])
      (when-not show-welcome?
        [connectivity/error-view])]))
