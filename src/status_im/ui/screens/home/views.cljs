@@ -6,6 +6,7 @@
             [status-im.ui.components.toolbar.view :as toolbar]
             [status-im.ui.components.toolbar.actions :as toolbar.actions]
             [status-im.ui.components.connectivity.view :as connectivity]
+            [status-im.ui.components.colors :as colors]
             [status-im.ui.screens.home.views.inner-item :as inner-item]
             [status-im.ui.screens.home.styles :as styles]
             [status-im.utils.platform :as platform]
@@ -41,13 +42,14 @@
         [(-> (toolbar.actions/add true #(re-frame/dispatch [:navigate-to :new]))
              (assoc-in [:icon-opts :accessibility-label] :new-chat-button))]]
        platform/ios?
-       [components/activity-indicator {:color :white
-                                       :animating true}])]))
+       [react/view {:style styles/spinner-container}
+        [components/activity-indicator {:color colors/blue
+                                        :animating true}]])]))
 
 (defn- home-action-button [logged-in?]
   [react/view styles/action-button-container
    [react/touchable-highlight {:accessibility-label :new-chat-button
-                               :on-press            #(re-frame/dispatch [:navigate-to :new])}
+                               :on-press            (when logged-in? #(re-frame/dispatch [:navigate-to :new]))}
     [react/view styles/action-button
 
      (if-not logged-in?
