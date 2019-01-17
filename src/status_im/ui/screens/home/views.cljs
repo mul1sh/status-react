@@ -34,18 +34,26 @@
                    (str "not syncing")))]]]
          [toolbar/content-wrapper
           [components.common/logo styles/toolbar-logo]]))
-     [toolbar/actions
-      (when (and platform/ios?
-                 logged-in?)
+     (cond
+       (and platform/ios?
+            logged-in?)
+       [toolbar/actions
         [(-> (toolbar.actions/add true #(re-frame/dispatch [:navigate-to :new]))
-             (assoc-in [:icon-opts :accessibility-label] :new-chat-button))])]]))
+             (assoc-in [:icon-opts :accessibility-label] :new-chat-button))]]
+       platform/ios?
+       [components/activity-indicator {:color :white
+                                       :animating true}])]))
 
-(defn- home-action-button []
+(defn- home-action-button [logged-in?]
   [react/view styles/action-button-container
    [react/touchable-highlight {:accessibility-label :new-chat-button
                                :on-press            #(re-frame/dispatch [:navigate-to :new])}
     [react/view styles/action-button
-     [icons/icon :icons/add {:color :white}]]]])
+
+     (if-not logged-in?
+       [components/activity-indicator {:color :white
+                                       :animating true}]
+       [icons/icon :icons/add {:color :white}])]]])
 
 (defn home-list-item [[home-item-id home-item]]
   (let [delete-action   (if (:chat-id home-item)
@@ -109,9 +117,8 @@
            [welcome view-id]
            :else
            [chats-list])
-     (when (and platform/android?
-                (not logging-in?))
-       [home-action-button])
+     (when platform/android?
+       [home-action-button (not logging-in?)])
      (when-not show-welcome?
        [connectivity/error-view])]))
 

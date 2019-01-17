@@ -152,11 +152,12 @@
     [react/view {:style styles/chat-list-view}
      [react/view {:style styles/chat-list-header}
       [search-input search-filter]
-      (when-not logging-in?
-        [react/view
+      [react/view
+       (if logging-in?
+         [components/activity-indicator {:animating true :color :white}]
          [react/touchable-highlight {:on-press #(re-frame/dispatch [:set-in [:desktop :popup] popup])}
           [react/view {:style styles/add-new}
-           [icons/icon :icons/add {:style {:tint-color :white}}]]]])]
+           [icons/icon :icons/add {:style {:tint-color :white}}]]])]]
      [react/scroll-view {:enableArrayScrollingOptimization true}
       [react/view
        (for [[index chat] (map-indexed vector filtered-home-items)]
