@@ -193,6 +193,10 @@
 
 (spec/def ::hardwallet (spec/nilable map?))
 
+(spec/def :stickers/packs (spec/nilable map?))
+(spec/def :stickers/packs-installed (spec/nilable map?))
+(spec/def :stickers/selected-pack (spec/nilable any?))
+
 (spec/def ::db (spec/keys :opt [:contacts/contacts
                                 :contacts/dapps
                                 :contacts/new-identity
@@ -259,7 +263,10 @@
                                 :ui/contact
                                 :ui/search
                                 :ui/chat
-                                :chats/loading?]
+                                :chats/loading?
+                                :stickers/packs
+                                :stickers/packs-installed
+                                :stickers/selected-pack]
                           :opt-un [::modal
                                    ::was-modal?
                                    ::rpc-url

@@ -4,4 +4,4 @@
 (handlers/register-handler-fx
  :stickers/select-pack
  (fn [{:keys [db]} [_ id]]
-   {:db (-> db (assoc-in [:stickers :selected-pack] id))}))
+   {:db (-> db (assoc :stickers/selected-pack id))}))

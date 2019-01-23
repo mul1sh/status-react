@@ -9,6 +9,18 @@
             [status-im.utils.money :as money]))
 
 (handlers/register-handler-fx
+ :stickers/load-sticker-pack-success
+ (fn [{:keys [db]} [_ {{:keys [id] :as pack} 'meta}]]
+   {:db (-> db (assoc-in [:stickers/packs id] pack))}))
+
+(handlers/register-handler-fx
+ :stickers/install-pack
+ (fn [{:keys [db]} [_ id]]
+   {:db (-> db
+            (assoc-in [:stickers/packs-installed id] (get-in db [:stickers/packs id]))
+            (assoc :stickers/selected-pack id))}))
+
+(handlers/register-handler-fx
  :stickers/list
  (fn [{:keys [db]} [_]]
    {:db (-> db (assoc-in [:wallet :request-transaction :symbol] symbol))}))

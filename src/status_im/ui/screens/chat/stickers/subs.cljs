@@ -5,5 +5,5 @@
 (re-frame/reg-sub
  :stickers/selected-pack
  (fn [db]
-   (get-in db [:stickers :selected-pack] :recent)))
+   (get db :stickers/selected-pack)))
 

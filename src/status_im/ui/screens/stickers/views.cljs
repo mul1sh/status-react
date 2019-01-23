@@ -17,23 +17,29 @@
   [react/image {:style  {:width thumbnail-icon-size :height thumbnail-icon-size :border-radius (/ thumbnail-icon-size 2)}
                 :source {:uri uri}}])
 
-(defview price-badge [price]
+(defn- installed-icon []
+  [react/view {:height 28 :width 28 :border-radius 14 :background-color colors/green :align-items :center :justify-content :center}
+   [icons/icon :icons/ok {:color colors/white :height 20 :width 20}]])
+
+(defview price-badge [price id]
   (letsubs [balance [:balance]]
     (let [snt             (money/wei-> :eth (:SNT balance))
           not-enough-snt? (> price snt)
           no-snt?         (nil? snt)]
-      [react/view {:background-color (if not-enough-snt? colors/gray colors/blue)
-                   :border-radius 14 :flex-direction :row :padding-horizontal 8 :height 28 :align-items :center}
-       [icons/icon :icons/logo {:color colors/white :width 12 :height 12}]
-       [react/text {:style {:margin-left 8 :font-size 15 :color colors/white}}
-        (cond no-snt?
-              "Buy with SNT"
-              (zero? price)
-              "Free"
-              :else
-              (str price))]])))
+      [react/touchable-highlight {:on-press #(when (zero? price) (re-frame/dispatch [:stickers/install-pack id]))}
+       [react/view {:background-color (if not-enough-snt? colors/gray colors/blue)
+                    :border-radius 14 :flex-direction :row :padding-horizontal 8 :height 28 :align-items :center}
+        (when (and (not (zero? price)) (not no-snt?))
+          [icons/icon :icons/logo {:color colors/white :width 12 :height 12 :container-style {:margin-right 8}}])
+        [react/text {:style {:font-size 15 :color colors/white}}
+         (cond (zero? price)
+               "Install"
+               no-snt?
+               "Buy with SNT"
+               :else
+               (str price))]]])))
 
-(defn pack-badge [{:keys [name author price thumbnail preview] :as pack}]
+(defn pack-badge [{:keys [name author price thumbnail preview id installed] :as pack}]
   [react/view {:margin-bottom 27}
    [react/touchable-highlight {:on-press #(re-frame/dispatch [:navigate-to :stickers-pack pack])}
     [react/image {:style {:height 200 :border-radius 20} :source {:uri preview}}]]
@@ -42,10 +48,12 @@
     [react/view {:padding-horizontal 16 :flex 1}
      [react/text {:style {:font-size 15}} name]
      [react/text {:style {:font-size 15 :color colors/gray :margin-top 6}} author]]
-    [price-badge price]]])
+    (if installed
+      [installed-icon]
+      [price-badge price id])]])
 
 (defview packs []
-  (letsubs [packs [:stickers/packs]]
+  (letsubs [packs [:stickers/all-packs]]
     [react/view styles/screen
      [status-bar/status-bar]
      [react/keyboard-avoiding-view components.styles/flex
@@ -60,7 +68,7 @@
 (def sticker-icon-size 60)
 
 (defview pack []
-  (letsubs [{:keys [name author price thumbnail stickers]} [:get-screen-params]]
+  (letsubs [{:keys [id name author price thumbnail stickers installed]} [:get-screen-params]]
     [react/view styles/screen
      [status-bar/status-bar]
      [react/keyboard-avoiding-view components.styles/flex
@@ -70,11 +78,15 @@
        [react/view {:padding-horizontal 16 :flex 1}
         [react/text {:style {:font-size 22 :font-weight :bold}} name]
         [react/text {:style {:font-size 15 :color colors/gray :margin-top 6}} author]]
-       [price-badge price]]
+       (if installed
+         [installed-icon]
+         [price-badge price id])]
       [react/view {:style {:padding-top 8 :flex 1}}
        [react/scroll-view {:keyboard-should-persist-taps :handled :style {:flex 1}}
         [react/view {:flex-direction :row :flex-wrap :wrap}
          (for [{:keys [uri]} stickers]
-           ^{:key uri}
-           [react/image {:style  {:margin 16 :width sticker-icon-size :height sticker-icon-size :border-radius (/ sticker-icon-size 2)}
+           ;;TODO in testing we have same uri, just to hide warning, remove when production
+           ^{:key (str uri (apply str (take 10 (repeatedly #(char (+ (rand 26) 65))))))}
+           [react/image {:style  {:margin 16 :width sticker-icon-size :height sticker-icon-size :border-radius
+                                  (/ sticker-icon-size 2)}
                          :source {:uri uri}}])]]]]]))
