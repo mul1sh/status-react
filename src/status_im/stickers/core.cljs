@@ -4,21 +4,16 @@
             [status-im.utils.http :as http]
             [cljs.reader :as edn]))
 
-(defn list [cb])
+(fx/defn init-stickers-packs [{:keys [db sticker-packs]}]
+  {:db (assoc db :stickers/packs-installed (into {} (map #(vector (:id %) %) sticker-packs)))})
 
-(defn list-owned [address cb])
+;;TODO IMPLEMENT WITH CONTRACT
+#_((defn list [cb])
 
-(defn buy [id cb])
+   (defn list-owned [address cb])
 
-(defn register [pack cb])
+   (defn buy [id cb])
 
-(defn unregister [pack cb])
+   (defn register [pack cb])
 
-(fx/defn load-stickers-packs [cofx]
-  ;;TODO request list of packs from contract
-  {:http-get {:url
-              "https://ipfs.infura.io/ipfs/QmeQGsEGAKNPyQRu4N1Byuk2dSmaAz4YKSC1xGcrRBnhbz/"
-              :success-event-creator
-              (fn [o]
-                [:stickers/load-sticker-pack-success (edn/read-string o)])
-              :failure-event-creator (fn [o] nil)}})
+   (defn unregister [pack cb]))

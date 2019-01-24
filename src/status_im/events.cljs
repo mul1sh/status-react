@@ -123,7 +123,8 @@
   (re-frame/inject-cofx :data-store/all-browsers)
   (re-frame/inject-cofx :data-store/all-dapp-permissions)
   (re-frame/inject-cofx :get-default-dapps)
-  (re-frame/inject-cofx :data-store/all-chats)]
+  (re-frame/inject-cofx :data-store/all-chats)
+  (re-frame/inject-cofx :data-store/sticker-packs)]
  account-change-success)
 
 (handlers/register-handler-fx
@@ -777,8 +778,11 @@
 
 (handlers/register-handler-fx
  :chat/send-sticker
- (fn [{{:keys [current-chat-id]} :db :as cofx} [_ sticker]]
-   (chat.input/send-sticker-fx cofx sticker current-chat-id)))
+ (fn [{{:keys [current-chat-id] :account/keys [account]} :db :as cofx} [_ {:keys [uri]}]]
+   (fx/merge
+    cofx
+    (accounts/update-recent-stickers (conj (remove #(= uri %) (:recent-stickers account)) uri))
+    (chat.input/send-sticker-fx uri current-chat-id))))
 
 (handlers/register-handler-fx
  :chat/disable-cooldown

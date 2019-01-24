@@ -234,7 +234,7 @@
               (browser/initialize-browsers)
               (browser/initialize-dapp-permissions)
               (extensions.registry/initialize)
-              (stickers/load-stickers-packs)
+              (stickers/init-stickers-packs)
               (accounts.update/update-sign-in-time)
               #(when-not (or (creating-account? %)
                              (finishing-hardwallet-setup? %))

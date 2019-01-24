@@ -225,3 +225,7 @@
 (def v18 (assoc-in v17
                    [:properties :installation-name]
                    {:type :string :optional true}))
+
+(def v19 (assoc-in v18
+                   [:properties :recent-stickers]
+                   {:type "string[]" :optional true}))

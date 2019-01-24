@@ -14,6 +14,8 @@
             [status-im.data-store.realm.schemas.account.membership-update :as membership-update]
             [status-im.data-store.realm.schemas.account.installation :as installation]
             [status-im.data-store.realm.schemas.account.contact-recovery :as contact-recovery]
+            [status-im.data-store.realm.schemas.account.sticker-pack :as sticker-pack]
+            [status-im.data-store.realm.schemas.account.sticker :as sticker]
             [status-im.data-store.realm.schemas.account.migrations :as migrations]
             [taoensso.timbre :as log]))
 
@@ -372,6 +374,22 @@
           dapp-permissions/v9
           contact-recovery/v1])
 
+(def v34 [chat/v13
+          transport/v7
+          contact/v3
+          message/v9
+          mailserver/v11
+          mailserver-topic/v1
+          user-status/v2
+          membership-update/v1
+          installation/v3
+          local-storage/v1
+          browser/v8
+          dapp-permissions/v9
+          contact-recovery/v1
+          sticker/v1
+          sticker-pack/v1])
+
 ;; put schemas ordered by version
 (def schemas [{:schema        v1
                :schemaVersion 1
@@ -471,4 +489,8 @@
                :migration     (constantly nil)}
               {:schema        v33
                :schemaVersion 33
+               :migration     (constantly nil)}
+              {:schema        v34
+               :schemaVersion 34
                :migration     (constantly nil)}])
+

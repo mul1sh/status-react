@@ -147,7 +147,7 @@
                                      :content      (cond-> {:chat-id current-chat-id
                                                             :text    message-text})})))
 
-(defn send-sticker-fx
+(fx/defn send-sticker-fx
   [{:keys [db] :as cofx} uri current-chat-id]
   (when-not (string/blank? uri)
     (chat.message/send-message cofx {:chat-id      current-chat-id

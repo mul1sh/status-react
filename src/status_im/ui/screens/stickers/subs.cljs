@@ -24,6 +24,12 @@
  (fn [[packs installed]]
    (map #(if (get installed (:id %)) (assoc % :installed true) %) (vals packs))))
 
+(re-frame/reg-sub
+ :stickers/recent
+ :<- [:account/account]
+ (fn [{:keys [recent-stickers]}]
+   recent-stickers))
+
 #_[{:id "id1"
     :name "Sticker pack 1"
     :thumbnail "https://ipfs.infura.io/ipfs/QmUJP281f6UpNJSXpLgMnpxERPnrshxyrLPLpXMWAjyF77"
