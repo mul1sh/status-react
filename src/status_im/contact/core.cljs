@@ -26,10 +26,8 @@
 
 (defn build-contact [{{:keys [chats] :account/keys [account]
                        :contacts/keys [contacts]} :db} public-key]
-  (cond-> (assoc (or (get contacts public-key)
-                     (contact.db/public-key->new-contact public-key))
-                 :address (contact.db/public-key->address public-key))
-
+  (cond-> (or (get contacts public-key)
+              (contact.db/public-key->new-contact public-key))
     (= public-key (:public-key account)) (assoc :name (:name account))))
 
 (defn- own-info [db]
@@ -101,14 +99,13 @@
       (let [contact          (get contacts public-key)
 
             ;; Backward compatibility with <= 0.9.21, as they don't send
-            ;; fcm-token & address in contact updates
+            ;; fcm-token in contact updates
             contact-props    (cond->
                               {:public-key   public-key
                                :photo-path   profile-image
                                :name         name
                                :address      (or address
-                                                 (:address contact)
-                                                 (contact.db/public-key->address public-key))
+                                                 (:address contact))
                                :last-updated timestamp-ms
                                   ;;NOTE (yenda) in case of concurrent contact request
                                :pending?     (get contact :pending? true)}
