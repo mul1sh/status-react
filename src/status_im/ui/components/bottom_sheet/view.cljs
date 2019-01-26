@@ -10,16 +10,21 @@
 (def swipe-opacity-range 100)
 (def cancellation-height 250)
 
+(def border-radius 16)
+(def bottom-padding 34)
+
 (defn animate-sign-panel
   [opacity-value bottom-value]
   (animation/start
    (animation/parallel
     [(animation/timing opacity-value
                        {:toValue  1
-                        :duration initial-animation-duration})
+                        :duration initial-animation-duration
+                        :useNativeDriver true})
      (animation/timing bottom-value
                        {:toValue  0
-                        :duration initial-animation-duration})])))
+                        :duration initial-animation-duration
+                        :useNativeDriver true})])))
 
 (defn- on-move
   [{:keys [height bottom-value opacity-value]}]
@@ -27,7 +32,7 @@
     (let [dy (.-dy s)]
       (when (pos? dy)
         (let [opacity (max 0.05 (- 1 (/ dy (- height swipe-opacity-range))))]
-          (animation/set-value bottom-value (- dy))
+          (animation/set-value bottom-value dy)
           (animation/set-value opacity-value opacity))))))
 
 (defn cancelled? [height dy vy]
@@ -42,10 +47,12 @@
     (animation/parallel
      [(animation/timing opacity-value
                         {:toValue  0
-                         :duration cancellation-animation-duration})
+                         :duration cancellation-animation-duration
+                         :useNativeDriver true})
       (animation/timing bottom-value
-                        {:toValue  (- height)
-                         :duration cancellation-animation-duration})])
+                        {:toValue  (+ height border-radius bottom-padding)
+                         :duration cancellation-animation-duration
+                         :useNativeDriver true})])
     #(do (reset! show-sheet? false)
 
          (when (fn? callback) (callback))))))
@@ -61,10 +68,12 @@
          (animation/parallel
           [(animation/timing opacity-value
                              {:toValue  1
-                              :duration release-animation-duration})
+                              :duration release-animation-duration
+                              :useNativeDriver true})
            (animation/timing bottom-value
                              {:toValue  0
-                              :duration release-animation-duration})]))))))
+                              :duration release-animation-duration
+                              :useNativeDriver true})]))))))
 
 (defn swipe-pan-responder [opts]
   (.create
@@ -79,9 +88,6 @@
 
 (defn pan-handlers [pan-responder]
   (js->clj (.-panHandlers pan-responder)))
-
-(def border-radius 16)
-(def bottom-padding 34)
 
 (def container-style
   {:position        :absolute
@@ -109,7 +115,7 @@
    :border-top-right-radius border-radius
    :height                  (+ content-height border-radius)
    :align-self              :stretch
-   :bottom                  bottom-value
+   :transform               [{:translateY bottom-value}]
    :justify-content         :flex-start
    :align-items             :center
    :padding-bottom          bottom-padding})
@@ -133,7 +139,7 @@
     :reagent-render
     (fn [{:keys [opacity-value bottom-value
                  height content on-cancel]
-          :as opts}]
+          :as   opts}]
       [react/view
        (merge
         (pan-handlers (swipe-pan-responder opts))
@@ -143,7 +149,8 @@
          :style    container-style}
 
         [react/animated-view (shadow-style opacity-value)]]
-       [react/animated-view (content-container-style height bottom-value)
+       [react/animated-view
+        {:style (content-container-style height bottom-value)}
         [react/view content-header-style
          [react/view handle-style]]
         content]])}))
@@ -153,7 +160,7 @@
     :or   {on-cancel (fn [])}} _]
   (let [show-sheet?          (reagent/atom show?)
         total-content-height (+ content-height border-radius bottom-padding)
-        bottom-value         (animation/create-value (- total-content-height))
+        bottom-value         (animation/create-value total-content-height)
         opacity-value        (animation/create-value 0)
         opts {:height        total-content-height
               :bottom-value  bottom-value
